@@ -1,0 +1,8 @@
+mypy >= 0.800
+pytest
+pytest-benchmark
+pytest-cov
+pytest-profiling
+gprof2dot
+jupyter
+

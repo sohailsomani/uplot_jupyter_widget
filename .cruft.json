@@ -1,0 +1,12 @@
+{
+    "template": "https://github.com/sohailsomani/soso-cookiecutter-python",
+    "commit": "46628717f5e5f196b85d7f0d1bd4fb876f4b5c2b",
+    "context": {
+        "cookiecutter": {
+            "project_name": "uplot_jupyter_widget",
+            "short_description": "Short description",
+            "_template": "https://github.com/sohailsomani/soso-cookiecutter-python"
+        }
+    },
+    "directory": null
+}

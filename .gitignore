@@ -1,0 +1,9 @@
+.mypy_cache
+dist
+*.egg-info
+.tox
+__pycache__
+prof
+.coverage
+README.html
+.ipynb_checkpoints
