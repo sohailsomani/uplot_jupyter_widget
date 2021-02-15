@@ -23,7 +23,7 @@ class uPlotWidget(jp_proxy_widget.JSProxyWidget):  # type: ignore
 
     js_functions = Dict({})
 
-    max_datapoints = Int(None,allow_none=True)
+    max_datapoints = Int(None, allow_none=True)
 
     def __init__(self, *args: typing.Any, **kwargs: typing.Any) -> None:
         super(uPlotWidget, self).__init__(*args, **kwargs)
@@ -84,5 +84,5 @@ class uPlotWidget(jp_proxy_widget.JSProxyWidget):  # type: ignore
                      data=self.data,
                      opts=self.opts)
 
-    def push_data(self,row:typing.List[float]) -> None:
-        self.element.push_data(row,self.max_datapoints)
+    def push_data(self, row: typing.List[float]) -> None:
+        self.element.push_data(row, self.max_datapoints)
