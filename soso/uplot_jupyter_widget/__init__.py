@@ -90,11 +90,11 @@ class uPlotWidget(jp_proxy_widget.JSProxyWidget):  # type: ignore
         self.element.push_data(row, self.max_datapoints)
 
     async def get_data_async(self) -> typing.List[typing.List[float]]:
-        def cb(value:typing.List[typing.List[float]]) -> None:
+        def cb(value: typing.List[typing.List[float]]) -> None:
             assert not fut.done()
             fut.set_result(value)
 
-        fut:asyncio.Future[typing.List[typing.List[float]]] = asyncio.Future()
-        self.get_value_async(cb,'element.__plot.data')
+        fut: asyncio.Future[typing.List[typing.List[float]]] = asyncio.Future()
+        self.get_value_async(cb, 'element.__plot.data')
         await fut
         return fut.result()

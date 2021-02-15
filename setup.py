@@ -12,7 +12,7 @@ setuptools.setup(
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/sohailsomani/soso-uplot_jupyter_widget",
-    packages=['soso','soso.uplot_jupyter_widget'],
+    packages=['soso', 'soso.uplot_jupyter_widget'],
     namespace_packages=['soso'],
     package_test={
         'soso.uplot_jupyter_widget': ['*.pyi', 'py.typed'],
@@ -22,5 +22,4 @@ setuptools.setup(
     classifiers=[
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent"
-    ]
-)
+    ])
