@@ -14,7 +14,7 @@ setuptools.setup(
     url="https://github.com/sohailsomani/soso-uplot_jupyter_widget",
     packages=['soso', 'soso.uplot_jupyter_widget'],
     namespace_packages=['soso'],
-    package_test={
+    package_data={
         'soso.uplot_jupyter_widget': ['*.pyi', 'py.typed'],
         'soso': ['*.pyi', 'py.typed']
     },
