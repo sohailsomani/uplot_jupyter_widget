@@ -1,3 +1,4 @@
+import asyncio
 import typing
 
 import jp_proxy_widget
@@ -52,6 +53,7 @@ class uPlotWidget(jp_proxy_widget.JSProxyWidget):  # type: ignore
         this.el.innerHTML = '';
         __replace_recursive(opts);
         let plot = new uPlot(opts,data,this.el);
+        element.__plot = plot;
 
         element.push_data = (row,max_data) => {
           let data = plot.data.slice(0);
@@ -78,10 +80,7 @@ class uPlotWidget(jp_proxy_widget.JSProxyWidget):  # type: ignore
             }
           }
           plot.setData(data,true);
-          console.log(JSON.stringify(data),max_data);
         };
-
-        element.get_data = () => { return plot.data; };
 
         """,
                      data=self.data,
@@ -89,3 +88,13 @@ class uPlotWidget(jp_proxy_widget.JSProxyWidget):  # type: ignore
 
     def push_data(self, row: typing.List[float]) -> None:
         self.element.push_data(row, self.max_datapoints)
+
+    async def get_data_async(self) -> typing.List[typing.List[float]]:
+        def cb(value:typing.List[typing.List[float]]) -> None:
+            assert not fut.done()
+            fut.set_result(value)
+
+        fut:asyncio.Future[typing.List[typing.List[float]]] = asyncio.Future()
+        self.get_value_async(cb,'element.__plot.data')
+        await fut
+        return fut.result()
