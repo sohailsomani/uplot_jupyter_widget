@@ -66,7 +66,7 @@ class uPlotWidget(jp_proxy_widget.JSProxyWidget):  # type: ignore
             for(ii = 0; ii < row.length; ++ii) {
               data[ii][data[ii].length-1] = row[ii];
             }
-          } else { // new row, get rid of old row
+          } else { // new timepoint
             for(ii = 0; ii < row.length; ++ii) {
               data[ii].push(row[ii]);
             }
@@ -80,6 +80,9 @@ class uPlotWidget(jp_proxy_widget.JSProxyWidget):  # type: ignore
           plot.setData(data,true);
           console.log(JSON.stringify(data),max_data);
         };
+
+        element.get_data = () => { return plot.data; };
+
         """,
                      data=self.data,
                      opts=self.opts)
