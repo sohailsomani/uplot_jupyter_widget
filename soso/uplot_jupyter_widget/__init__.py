@@ -22,8 +22,6 @@ class uPlotWidget(jp_proxy_widget.JSProxyWidget):  # type: ignore
     # example: 'opt': '__js_eval:() => console.log("HELLO")'
     opts = Dict({})
 
-    js_functions = Dict({})
-
     max_datapoints = Int(None, allow_none=True)
 
     def __init__(self, *args: typing.Any, **kwargs: typing.Any) -> None:
