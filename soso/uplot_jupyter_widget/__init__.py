@@ -1,7 +1,7 @@
 import typing
 
 import jp_proxy_widget
-from traitlets import Dict, List, Unicode
+from traitlets import Dict, Int, List, Unicode
 
 __all__ = ['uPlotWidget']
 
@@ -22,6 +22,8 @@ class uPlotWidget(jp_proxy_widget.JSProxyWidget):  # type: ignore
     opts = Dict({})
 
     js_functions = Dict({})
+
+    max_datapoints = Int(None,allow_none=True)
 
     def __init__(self, *args: typing.Any, **kwargs: typing.Any) -> None:
         super(uPlotWidget, self).__init__(*args, **kwargs)
@@ -50,6 +52,37 @@ class uPlotWidget(jp_proxy_widget.JSProxyWidget):  # type: ignore
         this.el.innerHTML = '';
         __replace_recursive(opts);
         let plot = new uPlot(opts,data,this.el);
+
+        element.push_data = (row,max_data) => {
+          let data = plot.data.slice(0);
+          // uPlot requires null, not NaN
+          for(let ii = 0; ii < row.length; ++ii) {
+            if(isNaN(row[ii])) row[ii] = null;
+          }
+          let ii;
+          // if the time point is the same
+          if(row[0] == data[0][data[0].length-1]) {
+            // just update the last row
+            for(ii = 0; ii < row.length; ++ii) {
+              data[ii][data[ii].length-1] = row[ii];
+            }
+          } else { // new row, get rid of old row
+            for(ii = 0; ii < row.length; ++ii) {
+              data[ii].push(row[ii]);
+            }
+          }
+          if (typeof(max_data) == 'number') {
+            for(ii =0; ii < row.length; ++ii) {
+              if(data[ii].length < max_data) continue;
+              data[ii] = data[ii].slice(-max_data);
+            }
+          }
+          plot.setData(data,true);
+          console.log(JSON.stringify(data),max_data);
+        };
         """,
                      data=self.data,
                      opts=self.opts)
+
+    def push_data(self,row:typing.List[float]) -> None:
+        self.element.push_data(row,self.max_datapoints)
