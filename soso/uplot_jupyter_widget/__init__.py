@@ -53,6 +53,10 @@ class uPlotWidget(jp_proxy_widget.JSProxyWidget):  # type: ignore
         let plot = new uPlot(opts,data,this.el);
         element.__plot = plot;
 
+        element.replace_data = (rows) => {
+          plot.setData(rows,true);
+        }
+
         element.push_data = (row,max_data) => {
           let data = plot.data.slice(0);
           // uPlot requires null, not NaN
@@ -86,6 +90,11 @@ class uPlotWidget(jp_proxy_widget.JSProxyWidget):  # type: ignore
 
     def push_data(self, row: typing.List[float]) -> None:
         self.element.push_data(row, self.max_datapoints)
+
+    def replace_data(self, data: typing.List[typing.List[float]]) -> None:
+        if self.max_datapoints is not None:
+            data = data[-self.max_datapoints:]
+        self.element.replace_data(data)
 
     async def get_data_async(self) -> typing.List[typing.List[float]]:
         def cb(value: typing.List[typing.List[float]]) -> None:
