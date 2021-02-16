@@ -1,17 +1,20 @@
 // Note: this code expects to be executed in js_init
 function __jseval_recursive(obj) {
-  for(var key in obj) {
-    let value = obj[key];
-    if((typeof value == "string") && value.startsWith("__js_eval:")) {
-      obj[key] = eval(value.replace("__js_eval:",""));
-    } else if (value.constructor == Object){
-      __jseval_recursive(value);
-    } else if (Array.isArray(value)) {
-      for(var elem of value) {
-        __jseval_recursive(elem);
-      }
+    __eval_recursive = (obj,key) => {
+        const value = obj[key];
+        if((typeof value == "string") && value.startsWith("__js_eval:")) {
+            obj[key] = eval(value.replace("__js_eval:",""));
+        } else if (value.constructor == Object){
+            __jseval_recursive(value);
+        } else if (Array.isArray(value)) {
+            for(let key in value) {
+                __eval_recursive(value,key);
+            }
+        }
+    };
+    for(let key in obj) {
+        __eval_recursive(obj,key);
     }
-  }
 }
 
 this.el.innerHTML = '';
