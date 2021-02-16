@@ -10,12 +10,15 @@ __all__ = ["uPlotWidget"]
 
 class uPlotWidget(jp_proxy_widget.JSProxyWidget):  # type: ignore
 
-    css = Unicode(
+    uplot_css = Unicode(
         "https://raw.githubusercontent.com/leeoniya/uPlot/master/dist/uPlot.min.css",  # noqa: E501
         allow_none=False)
-    js = Unicode(
+    uplot_js = Unicode(
         "https://raw.githubusercontent.com/leeoniya/uPlot/master/dist/uPlot.iife.min.js",  # noqa: E501
         allow_none=False)
+
+    # loaded after uPlot but before any other JS
+    extra_js = List([])
 
     data = List([])
     # For options that expect a function, for example, DateFormatterFactory,
@@ -28,13 +31,15 @@ class uPlotWidget(jp_proxy_widget.JSProxyWidget):  # type: ignore
 
     def __init__(self, *args: typing.Any, **kwargs: typing.Any) -> None:
         super(uPlotWidget, self).__init__(*args, **kwargs)
-        self.load_css(self.css)
-        self.load_js_files([self.js])
+        self.load_css(self.uplot_css)
+        self.load_js_files([self.uplot_js])
+        if self.extra_js:
+            self.load_js_files(self.extra_js)
+
+        self.__make_plot()
 
         self.observe(lambda: self.__make_plot(),
                      names=["data", "opts", "css", "js"])
-
-        self.__make_plot()
 
     def __make_plot(self) -> None:
         js = importlib.resources.read_text(__package__, "js_init.include.js")
