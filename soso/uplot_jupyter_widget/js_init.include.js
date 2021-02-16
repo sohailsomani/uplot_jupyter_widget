@@ -61,7 +61,10 @@ __update_size = () => {
     const title = this.el.querySelector(".u-title");
     const legend = this.el.querySelector(".u-legend");
 
-    const height = element.clientHeight - title.clientHeight - legend.clientHeight; // # noqa
+    const titleHeight = !!title ? title.clientHeight : 0;
+    const legendHeight = !!legend ? legend.clientHeight : 0;
+
+    const height = element.clientHeight - titleHeight - legendHeight; // # noqa
     const width = element.clientWidth;
 
     if (isNaN(height) || isNaN(width)) return;
@@ -93,3 +96,5 @@ function __debounce(func, wait, immediate) {
 
 this.el.addEventListener("resize",__debounce(__update_size,250));
 window.addEventListener("resize",__debounce(__update_size,250));
+
+console.log("uplot_jupyter_widget:js_init done",element);
