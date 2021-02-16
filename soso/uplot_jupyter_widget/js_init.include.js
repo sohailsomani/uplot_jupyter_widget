@@ -23,34 +23,34 @@ let plot = new uPlot(opts,data,this.el);
 element.__plot = plot;
 
 element.replace_data = (rows) => {
-  plot.setData(rows,true);
+    plot.setData(rows,true);
 };
 
 element.push_data = (row,max_data) => {
-  let data = plot.data.slice(0);
-  // uPlot requires null, not NaN
-  for(let ii = 0; ii < row.length; ++ii) {
-    if(isNaN(row[ii])) row[ii] = null;
-  }
-  let ii;
-  // if the time point is the same
-  if(row[0] == data[0][data[0].length-1]) {
-    // just update the last row
-    for(ii = 0; ii < row.length; ++ii) {
-      data[ii][data[ii].length-1] = row[ii];
+    let data = plot.data.slice(0);
+    // uPlot requires null, not NaN
+    for(let ii = 0; ii < row.length; ++ii) {
+        if(isNaN(row[ii])) row[ii] = null;
     }
-  } else { // new timepoint
-    for(ii = 0; ii < row.length; ++ii) {
-      data[ii].push(row[ii]);
+    let ii;
+    // if the time point is the same
+    if(row[0] == data[0][data[0].length-1]) {
+        // just update the last row
+        for(ii = 0; ii < row.length; ++ii) {
+            data[ii][data[ii].length-1] = row[ii];
+        }
+    } else { // new timepoint
+        for(ii = 0; ii < row.length; ++ii) {
+            data[ii].push(row[ii]);
+        }
     }
-  }
-  if (typeof(max_data) == 'number') {
-    for(ii =0; ii < row.length; ++ii) {
-      if(data[ii].length < max_data) continue;
-      data[ii] = data[ii].slice(-max_data);
+    if (typeof(max_data) == 'number') {
+        for(ii =0; ii < row.length; ++ii) {
+            if(data[ii].length < max_data) continue;
+            data[ii] = data[ii].slice(-max_data);
+        }
     }
-  }
-  plot.setData(data,true);
+    plot.setData(data,true);
 };
 
 __update_size = () => {
