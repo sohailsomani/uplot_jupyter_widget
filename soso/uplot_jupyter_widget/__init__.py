@@ -34,23 +34,23 @@ class uPlotWidget(jp_proxy_widget.JSProxyWidget):  # type: ignore
 
     def __make_plot(self) -> None:
         self.js_init("""
-        function __replace_recursive(obj) {
+        function __jseval_recursive(obj) {
           for(var key in obj) {
             let value = obj[key];
             if((typeof value == "string") && value.startsWith("__js_eval:")) {
               obj[key] = eval(value.replace("__js_eval:",""));
             } else if (value.constructor == Object){
-              __replace_recursive(value);
+              __jseval_recursive(value);
             } else if (Array.isArray(value)) {
               for(var elem of value) {
-                __replace_recursive(elem);
+                __jseval_recursive(elem);
               }
             }
           }
         }
 
         this.el.innerHTML = '';
-        __replace_recursive(opts);
+        __jseval_recursive(opts);
         let plot = new uPlot(opts,data,this.el);
         element.__plot = plot;
 
