@@ -50,7 +50,7 @@ element.push_data = (row,max_data) => {
             data[ii] = data[ii].slice(-max_data);
         }
     }
-    plot.setData(data,true);
+    plot.setData(data);
 };
 
 __update_size = () => {
