@@ -6,6 +6,7 @@ from traitlets import Bool, Dict, Int, List, Unicode
 
 __all__ = ['uPlotWidget']
 
+
 class uPlotWidget(jp_proxy_widget.JSProxyWidget):  # type: ignore
 
     css = Unicode(
@@ -92,7 +93,7 @@ class uPlotWidget(jp_proxy_widget.JSProxyWidget):  # type: ignore
             const title = this.el.querySelector(".u-title");
             const legend = this.el.querySelector(".u-legend");
 
-            const height = element.clientHeight - title.clientHeight - legend.clientHeight;
+            const height = element.clientHeight - title.clientHeight - legend.clientHeight; // # noqa
             const width = element.clientWidth;
 
             if (isNaN(height) || isNaN(width)) return;
