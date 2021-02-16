@@ -96,7 +96,6 @@ class uPlotWidget(jp_proxy_widget.JSProxyWidget):  # type: ignore
             const width = element.clientWidth;
 
             if (isNaN(height) || isNaN(width)) return;
-            console.log("Resizing uPlot widget",{height:height,width:width});
             plot.setSize({
                 height: height,
                 width: width
