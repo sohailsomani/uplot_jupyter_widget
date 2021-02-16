@@ -67,7 +67,7 @@ plot = uPlotWidget(
 display(plot)
 ```
 
-Results in the following (sorry for the custom dark mode):
+Results in the following:
 
 ![](screenshot.png)
 
