@@ -2,10 +2,9 @@ import asyncio
 import typing
 
 import jp_proxy_widget
-from traitlets import Dict, Int, List, Unicode
+from traitlets import Bool, Dict, Int, List, Unicode
 
 __all__ = ['uPlotWidget']
-
 
 class uPlotWidget(jp_proxy_widget.JSProxyWidget):  # type: ignore
 
@@ -23,6 +22,7 @@ class uPlotWidget(jp_proxy_widget.JSProxyWidget):  # type: ignore
     opts = Dict({})
 
     max_datapoints = Int(None, allow_none=True)
+    auto_resize = Bool(False, allow_none=False).tag(sync=True)
 
     def __init__(self, *args: typing.Any, **kwargs: typing.Any) -> None:
         super(uPlotWidget, self).__init__(*args, **kwargs)
@@ -83,6 +83,48 @@ class uPlotWidget(jp_proxy_widget.JSProxyWidget):  # type: ignore
           }
           plot.setData(data,true);
         };
+
+        __update_size = () => {
+            const auto_resize = this.model.get('auto_resize');
+            if(!auto_resize) return;
+
+            const element = this.el;
+            const title = this.el.querySelector(".u-title");
+            const legend = this.el.querySelector(".u-legend");
+
+            const height = element.clientHeight - title.clientHeight - legend.clientHeight;
+            const width = element.clientWidth;
+
+            if (isNaN(height) || isNaN(width)) return;
+            console.log("Resizing uPlot widget",{height:height,width:width});
+            plot.setSize({
+                height: height,
+                width: width
+            });
+        }
+
+        // Initial resize
+        setTimeout(__update_size,1000);
+
+        // https://davidwalsh.name/javascript-debounce-function
+        function __debounce(func, wait, immediate) {
+            var timeout;
+            return function() {
+                var context = this, args = arguments;
+                var later = function() {
+                    timeout = null;
+                    if (!immediate) func.apply(context, args);
+                };
+                var callNow = immediate && !timeout;
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+                if (callNow) func.apply(context, args);
+            };
+        };
+
+
+        this.el.addEventListener("resize",__debounce(__update_size,250));
+        window.addEventListener("resize",__debounce(__update_size,250));
 
         """,
                      data=self.data,
