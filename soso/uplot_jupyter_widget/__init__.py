@@ -54,6 +54,6 @@ class uPlotWidget(jp_proxy_widget.JSProxyWidget):  # type: ignore
             fut.set_result(value)
 
         fut: asyncio.Future[typing.List[typing.List[float]]] = asyncio.Future()
-        self.get_value_async(cb, "this.__plot.data")
+        self.get_value_async(cb, "element.__plot.data")
         await fut
         return fut.result()
