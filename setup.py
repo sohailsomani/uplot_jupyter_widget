@@ -15,7 +15,7 @@ setuptools.setup(
     packages=['soso', 'soso.uplot_jupyter_widget'],
     namespace_packages=['soso'],
     package_data={
-        'soso.uplot_jupyter_widget': ['*.pyi', 'py.typed'],
+        'soso.uplot_jupyter_widget': ['*.pyi', 'py.typed', '*.js'],
         'soso': ['*.pyi', 'py.typed']
     },
     install_requires=['jp_proxy_widget', 'ipywidgets', 'traitlets'],
