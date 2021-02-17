@@ -26,7 +26,7 @@ element.replace_data = (rows) => {
     plot.setData(rows,true);
 };
 
-element.push_data = (row,max_data) => {
+var __push_data = (row,max_data) => {
     let data = plot.data.slice(0);
     // uPlot requires null, not NaN
     for(let ii = 0; ii < row.length; ++ii) {
@@ -51,6 +51,20 @@ element.push_data = (row,max_data) => {
         }
     }
     plot.setData(data);
+};
+
+const self = this;
+// overwrite jp_proxy_widget message handling
+// because protocol is too chatty otherwise for quick updates.
+const old_handle_custom_message = self.handle_custom_message.bind(self);
+self['handle_custom_message'] = function(content,buffers,widget) {
+    if(content['command'] == '__uplot_push_data') {
+        const row = content['payload'][0];
+        const max_data = content['payload'][1];
+        __push_data(row,max_data);
+    } else {
+        old_handle_custom_message(content,buffers,widget);
+    }
 };
 
 __update_size = () => {
