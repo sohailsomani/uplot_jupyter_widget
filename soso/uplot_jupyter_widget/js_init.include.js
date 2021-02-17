@@ -96,9 +96,6 @@ __update_size = () => {
     });
 };
 
-// Initial resize
-setTimeout(__update_size,1000);
-
 // https://davidwalsh.name/javascript-debounce-function
 function __debounce(func, wait, immediate) {
     var timeout;
@@ -115,8 +112,12 @@ function __debounce(func, wait, immediate) {
     };
 };
 
+const __debounced_resize = __debounce(__update_size,250);
 
-this.el.addEventListener("resize",__debounce(__update_size,250));
-window.addEventListener("resize",__debounce(__update_size,250));
+// Initial resize
+setTimeout(__update_size,1000);
+
+this.el.addEventListener("resize",__debounced_resize);
+window.addEventListener("resize",__debounced_resize);
 
 console.log("uplot_jupyter_widget:js_init done",element);
