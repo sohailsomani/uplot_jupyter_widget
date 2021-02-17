@@ -24,6 +24,7 @@ element.__plot = plot;
 
 element.replace_data = (rows) => {
     plot.setData(rows,true);
+    __update_size();
 };
 
 var __push_data = (row,max_data) => {
