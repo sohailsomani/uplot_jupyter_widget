@@ -38,7 +38,7 @@ class uPlotWidget(jp_proxy_widget.JSProxyWidget):  # type: ignore
 
         self.__make_plot()
 
-        self.observe(lambda: self.__make_plot(),
+        self.observe(lambda _: self.__make_plot(),
                      names=["data", "opts", "css", "js"])
 
     def __make_plot(self) -> None:
