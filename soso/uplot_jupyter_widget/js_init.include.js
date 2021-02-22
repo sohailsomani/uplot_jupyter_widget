@@ -29,7 +29,7 @@ element.replace_data = (rows) => {
 
 var __push_data = (row,max_data) => {
     let data = plot.data.slice(0);
-    let forceRecalcAxes = false;
+    let newTimepoint = false;
     // uPlot requires null, not NaN
     for(let ii = 0; ii < row.length; ++ii) {
         if(isNaN(row[ii])) row[ii] = null;
@@ -45,7 +45,6 @@ var __push_data = (row,max_data) => {
         for(ii = 0; ii < row.length; ++ii) {
             data[ii].push(row[ii]);
         }
-        forceRecalcAxes = true;
     }
     if (typeof(max_data) == 'number') {
         for(ii =0; ii < row.length; ++ii) {
@@ -53,12 +52,10 @@ var __push_data = (row,max_data) => {
             data[ii] = data[ii].slice(-max_data);
         }
     }
-    // In case we are zoomed into a selection when data is pushed, we only want
-    // to recalculate axes if we get a new timepoint.
-    plot.setData(data,forceRecalcAxes);
-    if(!forceRecalcAxes) {
-        plot.redraw(false,false);
-    }
+    // Don't redraw anything if we have a selection
+    const [xmin, xmax] = [plot.scales.x.min, plot.scales.x.max];
+    const rescaleAxes = xmin == 0 && xmax == (plot.data[0].length-1);
+    plot.setData(data,rescaleAxes);
 };
 
 const self = this;
