@@ -1,4 +1,5 @@
 import asyncio
+import copy
 import importlib.resources
 import typing
 
@@ -41,9 +42,19 @@ class uPlotWidget(jp_proxy_widget.JSProxyWidget):  # type: ignore
         self.observe(lambda _: self.__make_plot(),
                      names=["data", "opts", "css", "js", "max_datapoints"])
 
+    def __slice_data(self,
+                     data: typing.List[typing.List[float]]) -> typing.List[typing.List[float]]:
+        if self.max_datapoints is None:
+            return data
+        data = copy.deepcopy(self.data)
+        for idx in range(len(data)):
+            data[idx] = data[idx][-self.max_datapoints:]
+        return data
+
     def __make_plot(self) -> None:
         js = importlib.resources.read_text(__package__, "js_init.include.js")
-        self.js_init(js, data=self.data, opts=self.opts)
+        data = self.__slice_data(self.data)
+        self.js_init(js, data=data, opts=self.opts)
 
     def push_data(self, row: typing.List[float]) -> None:
         msg: typing.Dict[str, typing.Any] = {
@@ -53,8 +64,7 @@ class uPlotWidget(jp_proxy_widget.JSProxyWidget):  # type: ignore
         self.send(msg)
 
     def replace_data(self, data: typing.List[typing.List[float]]) -> None:
-        if self.max_datapoints is not None:
-            data = data[-self.max_datapoints:]
+        data = self.__slice_data(data)
         self.element.replace_data(data)
 
     async def get_data_async(self) -> typing.List[typing.List[float]]:
