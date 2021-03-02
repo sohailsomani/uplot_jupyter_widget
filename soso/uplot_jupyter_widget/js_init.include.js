@@ -30,10 +30,6 @@ element.replace_data = (rows) => {
 var __push_data = (row,max_data) => {
     let data = plot.data.slice(0);
     let newTimepoint = false;
-    // uPlot requires null, not NaN
-    for(let ii = 0; ii < row.length; ++ii) {
-        if(isNaN(row[ii])) row[ii] = null;
-    }
     let ii;
     // if the time point is the same
     if(row[0] == data[0][data[0].length-1]) {

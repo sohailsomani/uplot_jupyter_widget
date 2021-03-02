@@ -56,7 +56,7 @@ class uPlotWidget(jp_proxy_widget.JSProxyWidget):  # type: ignore
         data = self.__slice_data(self.data)
         self.js_init(js, data=data, opts=self.opts)
 
-    def push_data(self, row: typing.List[float]) -> None:
+    def push_data(self, row: typing.List[typing.Optional[float]]) -> None:
         msg: typing.Dict[str, typing.Any] = {
             'command': '__uplot_push_data',
             'payload': [row, self.max_datapoints]
