@@ -71,6 +71,7 @@ self['handle_custom_message'] = function(content,buffers,widget) {
 __update_size = () => {
     const auto_resize = this.model.get('auto_resize');
     if(!auto_resize) return;
+    const fullscreen = this.model.get('fullscreen');
 
     const element = this.el;
     const title = this.el.querySelector(".u-title");
@@ -79,8 +80,18 @@ __update_size = () => {
     const titleHeight = !!title ? title.clientHeight : 0;
     const legendHeight = !!legend ? legend.clientHeight : 0;
 
-    const height = element.clientHeight - titleHeight - legendHeight; // # noqa
-    const width = element.clientWidth;
+    let height, width;
+    if(fullscreen) {
+        height = window.innerHeight - 100 - titleHeight - legendHeight;
+        width = element.clientWidth; // probably wrong
+        if(!!this.el.parentElement) {
+            this.el.parentElement.style.height = height + 'px';
+            this.el.parentElement.style.padding = "0px";
+        }
+    } else {
+        height = element.clientHeight - titleHeight - legendHeight; // # noqa
+        width = element.clientWidth;
+    }
 
     if (isNaN(height) || isNaN(width)) return;
     plot.setSize({

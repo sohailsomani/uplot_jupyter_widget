@@ -29,6 +29,8 @@ class uPlotWidget(jp_proxy_widget.JSProxyWidget):  # type: ignore
 
     max_datapoints = Int(None, allow_none=True)
     auto_resize = Bool(False, allow_none=False).tag(sync=True)
+    # Only used if auto_resize also true
+    fullscreen = Bool(False, allow_none=False).tag(sync=True)
 
     def __init__(self, *args: typing.Any, **kwargs: typing.Any) -> None:
         super(uPlotWidget, self).__init__(*args, **kwargs)
