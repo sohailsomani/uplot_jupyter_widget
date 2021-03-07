@@ -1,5 +1,5 @@
 // Note: this code expects to be executed in js_init
-function __jseval_recursive(obj) {
+const __jseval_recursive = (obj) => {
     __eval_recursive = (obj,key) => {
         const value = obj[key];
         if((typeof value == "string") && value.startsWith("__js_eval:")) {
@@ -15,7 +15,7 @@ function __jseval_recursive(obj) {
     for(let key in obj) {
         __eval_recursive(obj,key);
     }
-}
+};
 
 this.el.innerHTML = '';
 __jseval_recursive(opts);
