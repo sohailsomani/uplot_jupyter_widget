@@ -4,6 +4,7 @@ import importlib.resources
 import typing
 
 import jp_proxy_widget
+from ipywidgets import widgets  # type: ignore
 from traitlets import Bool, Dict, Int, List, Unicode
 
 __all__ = ["uPlotWidget"]
@@ -27,6 +28,8 @@ class uPlotWidget(jp_proxy_widget.JSProxyWidget):  # type: ignore
     # example: "opt": "__js_eval:() => console.log("HELLO")"
     opts = Dict({})
 
+    in_selection_mode = Bool(False).tag(sync=True)
+
     max_datapoints = Int(None, allow_none=True)
     auto_resize = Bool(False, allow_none=False).tag(sync=True)
     # Only used if auto_resize also true
@@ -34,6 +37,8 @@ class uPlotWidget(jp_proxy_widget.JSProxyWidget):  # type: ignore
 
     def __init__(self, *args: typing.Any, **kwargs: typing.Any) -> None:
         super(uPlotWidget, self).__init__(*args, **kwargs)
+        self._clicked = asyncio.Event()
+        self._click_handlers = widgets.CallbackDispatcher()
         self.load_css(self.uplot_css)
         self.load_js_files([self.uplot_js])
         if self.extra_js:
@@ -43,6 +48,37 @@ class uPlotWidget(jp_proxy_widget.JSProxyWidget):  # type: ignore
 
         self.observe(lambda _: self.__make_plot(),
                      names=["data", "opts", "css", "js", "max_datapoints"])
+
+    def handle_custom_message_wrapper(self, widget: typing.Any, data: typing.Dict[str, typing.Any],
+                                      *etcetera: typing.Any) -> None:
+        if data.get('event', '') == 'click':
+            x = data['x']
+            y = data['y']
+            self._click_handlers(x, y)
+        else:
+            super().handle_custom_message_wrapper(widget, data, *etcetera)
+
+    def on_click(self,
+                 callback: typing.Callable[[float, float], None],
+                 remove: bool = False) -> None:
+        self._click_handlers.register_callback(callback, remove=remove)
+
+    async def select_point(self) -> typing.Tuple[float, float]:
+        self.in_selection_mode = True
+        try:
+            out = []
+            self._clicked.clear()
+
+            def callback(xin: float, yin: float) -> None:
+                out.append((xin, yin))
+                self._clicked.set()
+
+            self.on_click(callback, remove=False)
+            await self._clicked.wait()
+            self.on_click(callback, remove=True)
+            return out[0]
+        finally:
+            self.in_selection_mode = False
 
     def __slice_data(self,
                      data: typing.List[typing.List[float]]) -> typing.List[typing.List[float]]:

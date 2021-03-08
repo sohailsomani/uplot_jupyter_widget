@@ -65,6 +65,19 @@ self['handle_custom_message'] = function(content,buffers,widget) {
     }
 };
 
+this._handle_click = (event) => {
+    const {left,top} = plot.cursor;
+    // true = canvas coordinates
+    const x = plot.posToVal(left,'x',true);
+    const y = plot.posToVal(top,'y',true);
+    this.send({
+        event: 'click',
+        x,y
+    });
+};
+
+this.el.addEventListener('click',this._handle_click)
+
 __update_size = () => {
     const auto_resize = this.model.get('auto_resize');
     if(!auto_resize) return;
