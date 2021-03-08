@@ -1,6 +1,6 @@
 // Note: this code expects to be executed in js_init
 const __jseval_recursive = (obj) => {
-    __eval_recursive = function(obj,key) {
+    __eval_recursive = (obj,key) => {
         const value = obj[key];
         if((typeof value == "string") && value.startsWith("__js_eval:")) {
             obj[key] = eval(value.replace("__js_eval:",""));
@@ -67,13 +67,16 @@ self['handle_custom_message'] = function(content,buffers,widget) {
 
 this._handle_click = (event) => {
     const {left,top} = plot.cursor;
+    data = {
+        event: 'click'
+    };
     // true = canvas coordinates
-    const x = plot.posToVal(left,'x',true);
-    const y = plot.posToVal(top,'y',true);
-    this.send({
-        event: 'click',
-        x,y
-    });
+    data[plot.series[0].scale] = plot.posToVal(left,plot.series[0].scale,true);
+    for(let ii = 1; ii < plot.series.length; ++ii) {
+        const s = plot.series[ii];
+        data[s.scale] = plot.posToVal(top,s.scale,true);
+    }
+    this.send(data);
 };
 
 this.el.addEventListener('click',this._handle_click)

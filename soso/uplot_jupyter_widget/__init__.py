@@ -52,25 +52,25 @@ class uPlotWidget(jp_proxy_widget.JSProxyWidget):  # type: ignore
     def handle_custom_message_wrapper(self, widget: typing.Any, data: typing.Dict[str, typing.Any],
                                       *etcetera: typing.Any) -> None:
         if data.get('event', '') == 'click':
-            x = data['x']
-            y = data['y']
-            self._click_handlers(x, y)
+            d = data.copy()
+            del d['event']
+            self._click_handlers(d)
         else:
             super().handle_custom_message_wrapper(widget, data, *etcetera)
 
     def on_click(self,
-                 callback: typing.Callable[[float, float], None],
+                 callback: typing.Callable[[typing.Dict[str, float]], None],
                  remove: bool = False) -> None:
         self._click_handlers.register_callback(callback, remove=remove)
 
-    async def select_point(self) -> typing.Tuple[float, float]:
+    async def select_point(self) -> typing.Dict[str, float]:
         self.in_selection_mode = True
         try:
             out = []
             self._clicked.clear()
 
-            def callback(xin: float, yin: float) -> None:
-                out.append((xin, yin))
+            def callback(d: typing.Dict[str, float]) -> None:
+                out.append(d)
                 self._clicked.set()
 
             self.on_click(callback, remove=False)
