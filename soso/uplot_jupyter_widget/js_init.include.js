@@ -54,6 +54,9 @@ var __push_data = (row,max_data) => {
         }
     }
     plot.setData(data,rescaleAxes);
+    if(!rescaleAxes) {
+        plot.redraw(false,false);
+    }
 };
 
 const self = this;
