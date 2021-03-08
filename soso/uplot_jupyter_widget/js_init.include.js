@@ -1,6 +1,6 @@
 // Note: this code expects to be executed in js_init
 const __jseval_recursive = (obj) => {
-    __eval_recursive = (obj,key) => {
+    __eval_recursive = function(obj,key) {
         const value = obj[key];
         if((typeof value == "string") && value.startsWith("__js_eval:")) {
             obj[key] = eval(value.replace("__js_eval:",""));
@@ -48,10 +48,7 @@ var __push_data = (row,max_data) => {
             data[ii] = data[ii].slice(-max_data);
         }
     }
-    // Don't redraw anything if we have a selection
-    const [xmin, xmax] = [plot.scales.x.min, plot.scales.x.max];
-    const rescaleAxes = xmin == 0 && xmax == (plot.data[0].length-1);
-    plot.setData(data,rescaleAxes);
+    plot.setData(data);
 };
 
 const self = this;
