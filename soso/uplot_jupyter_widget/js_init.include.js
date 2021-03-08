@@ -1,4 +1,5 @@
 // Note: this code expects to be executed in js_init
+// Also this code is ugly and gross.
 const __jseval_recursive = (obj) => {
     __eval_recursive = (obj,key) => {
         const value = obj[key];
@@ -29,6 +30,9 @@ element.replace_data = (rows) => {
 };
 
 var __push_data = (row,max_data) => {
+    // Only rescale in setData if we have no selection
+    const [xmin, xmax] = [plot.scales.x.min, plot.scales.x.max];
+    const rescaleAxes = xmin == plot.data[0][0] && xmax == plot.data[0][plot.data[0].length-1];
     let data = plot.data.slice(0);
     let newTimepoint = false;
     let ii;
@@ -49,10 +53,7 @@ var __push_data = (row,max_data) => {
             data[ii] = data[ii].slice(-max_data);
         }
     }
-    // TODO: Don't redraw anything if we have a selection
-    // const [xmin, xmax] = [plot.scales.x.min, plot.scales.x.max];
-    // const rescaleAxes = xmin == 0 && xmax == (plot.data[0].length-1);
-    plot.setData(data);
+    plot.setData(data,rescaleAxes);
 };
 
 const self = this;
