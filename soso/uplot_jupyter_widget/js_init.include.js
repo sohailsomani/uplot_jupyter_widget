@@ -86,6 +86,10 @@ this.el._handle_click = (event) => {
 
 this.el.addEventListener('click',this.el._handle_click);
 
+this.model.on('change:in_selection_mode',() => {
+    this.el.classList.toggle('uplot-in-selection-mode',this.model.get('in_selection_mode'));
+});
+
 __update_size = () => {
     const auto_resize = this.model.get('auto_resize');
     if(!auto_resize) return;
