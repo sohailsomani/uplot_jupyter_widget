@@ -49,6 +49,9 @@ var __push_data = (row,max_data) => {
             data[ii] = data[ii].slice(-max_data);
         }
     }
+    // TODO: Don't redraw anything if we have a selection
+    // const [xmin, xmax] = [plot.scales.x.min, plot.scales.x.max];
+    // const rescaleAxes = xmin == 0 && xmax == (plot.data[0].length-1);
     plot.setData(data);
 };
 
