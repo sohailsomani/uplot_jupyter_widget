@@ -19,6 +19,7 @@ const __jseval_recursive = (obj) => {
 
 this.el.innerHTML = '';
 __jseval_recursive(opts);
+
 let plot = new uPlot(opts,data,this.el);
 element.__plot = plot;
 
@@ -65,7 +66,11 @@ self['handle_custom_message'] = function(content,buffers,widget) {
     }
 };
 
-this._handle_click = (event) => {
+if(this.el.hasOwnProperty('_handle_click')) {
+    this.el.removeEventListener('click',this.el._handle_click);
+}
+
+this.el._handle_click = (event) => {
     const {left,top} = plot.cursor;
     data = {
         event: 'click'
@@ -79,7 +84,7 @@ this._handle_click = (event) => {
     this.send(data);
 };
 
-this.el.addEventListener('click',this._handle_click)
+this.el.addEventListener('click',this.el._handle_click);
 
 __update_size = () => {
     const auto_resize = this.model.get('auto_resize');
