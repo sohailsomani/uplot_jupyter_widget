@@ -31,6 +31,7 @@ element.replace_data = (rows) => {
 
 var __push_data = (row,max_data) => {
     // Only rescale in setData if we have no selection
+    // TODO: rescale y if y axis grows
     const [xmin, xmax] = [plot.scales.x.min, plot.scales.x.max];
     const rescaleAxes = xmin == plot.data[0][0] && xmax == plot.data[0][plot.data[0].length-1];
     let data = plot.data.slice(0);
