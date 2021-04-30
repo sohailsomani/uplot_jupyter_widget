@@ -59,19 +59,21 @@ var __do_actual_push_data = () => {
             }
         }
     }
-    let new_last_x = data[0][data[0].length-1];
-    if(new_last_x != last_x) {
-        // rescale axes
-        plot.setData(data, true);
-    } else {
-        plot.setData(data, false);
-        plot.redraw();
-    }
+    // Don't redraw anything if we have a selection or we got a new x value
+    const [xmin, xmax] = [plot.scales.x.min, plot.scales.x.max];
+    const rescaleAxes = xmin == 0 && xmax == (plot.data[0].length-1);
+    const newX = last_x != data[0][data[0].length-1];
+    plot.setData(data, newX || rescaleAxes);
 };
+
+var interval = setInterval(() => {
+    if(__batched_rows.length > 0) {
+        requestAnimationFrame(__do_actual_push_data);
+    }
+},100);
 
 var __push_data = (row,max_data) => {
     __batched_rows.push(row);
-    requestAnimationFrame(__do_actual_push_data);
 };
 
 const self = this;
