@@ -36,6 +36,7 @@ var __do_actual_push_data = () => {
     __batched_rows = [];
     let max_data = this.model.get('max_data');
     let data = plot.data.slice(0);
+    let last_x = data[0][data[0].length-1];
     for(let rr = 0; rr < rows.length; ++rr) {
         let row = rows[rr];
         let newTimepoint = false;
@@ -58,7 +59,14 @@ var __do_actual_push_data = () => {
             }
         }
     }
-    plot.setData(data, true);
+    let new_last_x = data[0][data[0].length-1];
+    if(new_last_x != last_x) {
+        // rescale axes
+        plot.setData(data, true);
+    } else {
+        plot.setData(data, false);
+        plot.redraw();
+    }
 };
 
 var __push_data = (row,max_data) => {
