@@ -29,31 +29,41 @@ element.replace_data = (rows) => {
     __update_size();
 };
 
-var __push_data = (row,max_data) => {
+var __batched_rows = [];
+
+var __do_actual_push_data = () => {
+    let rows = __batched_rows;
+    __batched_rows = [];
+    let max_data = this.model.get('max_data');
     let data = plot.data.slice(0);
-    let newTimepoint = false;
-    let ii;
-    // if the time point is the same
-    if(row[0] == data[0][data[0].length-1]) {
-        // just update the last row
-        for(ii = 0; ii < row.length; ++ii) {
-            data[ii][data[ii].length-1] = row[ii];
+    for(let rr = 0; rr < rows.length; ++rr) {
+        let row = rows[rr];
+        let newTimepoint = false;
+        let ii;
+        // if the time point is the same
+        if(row[0] == data[0][data[0].length-1]) {
+            // just update the last row
+            for(ii = 0; ii < row.length; ++ii) {
+                data[ii][data[ii].length-1] = row[ii];
+            }
+        } else { // new timepoint
+            for(ii = 0; ii < row.length; ++ii) {
+                data[ii].push(row[ii]);
+            }
         }
-    } else { // new timepoint
-        for(ii = 0; ii < row.length; ++ii) {
-            data[ii].push(row[ii]);
+        if (typeof(max_data) == 'number') {
+            for(ii =0; ii < row.length; ++ii) {
+                if(data[ii].length < max_data) continue;
+                data[ii] = data[ii].slice(-max_data);
+            }
         }
     }
-    if (typeof(max_data) == 'number') {
-        for(ii =0; ii < row.length; ++ii) {
-            if(data[ii].length < max_data) continue;
-            data[ii] = data[ii].slice(-max_data);
-        }
-    }
-    // Don't redraw anything if we have a selection
-    const [xmin, xmax] = [plot.scales.x.min, plot.scales.x.max];
-    const rescaleAxes = xmin == 0 && xmax == (plot.data[0].length-1);
-    plot.setData(data,rescaleAxes);
+    plot.setData(data, true);
+};
+
+var __push_data = (row,max_data) => {
+    __batched_rows.push(row);
+    requestAnimationFrame(__do_actual_push_data);
 };
 
 const self = this;
