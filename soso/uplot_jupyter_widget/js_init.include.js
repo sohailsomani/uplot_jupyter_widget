@@ -21,6 +21,14 @@ const __jseval_recursive = (obj) => {
 this.el.innerHTML = '';
 __jseval_recursive(opts);
 
+for(let ii = 0; ii < data.length; ++ii) {
+    for(let jj=0; jj < data[ii].length; ++jj) {
+        if(isNaN(data[ii][jj])) {
+            data[ii][jj] = null;
+        }
+    }
+}
+
 let plot = new uPlot(opts,data,this.el);
 element.__plot = plot;
 
@@ -56,6 +64,11 @@ var __do_actual_push_data = () => {
             for(ii =0; ii < row.length; ++ii) {
                 if(data[ii].length < max_data) continue;
                 data[ii] = data[ii].slice(-max_data);
+            }
+        }
+        for(ii = 0 ;ii < data.length; ++ii) {
+            if(isNaN(data[ii][data[ii].length-1])) {
+                data[ii][data[ii].length-1] = null;
             }
         }
     }
