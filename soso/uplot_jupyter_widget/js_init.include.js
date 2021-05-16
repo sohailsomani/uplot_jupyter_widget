@@ -79,13 +79,19 @@ var __do_actual_push_data = () => {
     plot.setData(data, newX || rescaleAxes);
 };
 
-var interval = setInterval(() => {
-    if(__batched_rows.length > 0) {
-        requestAnimationFrame(__do_actual_push_data);
-    }
-},100);
+this.__interval = null;
 
 var __push_data = (row,max_data) => {
+    if(!this.__interval) {
+        this.__interval = setInterval(() => {
+            if(__batched_rows.length > 0) {
+                requestAnimationFrame(__do_actual_push_data);
+            } else {
+                clearInterval(this.__interval);
+                this.__interval = null;
+            }
+        },100);
+    };
     __batched_rows.push(row);
 };
 
