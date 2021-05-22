@@ -37,9 +37,9 @@ element.replace_data = (rows) => {
     __update_size();
 };
 
-var __batched_rows = [];
+let __batched_rows = [];
 
-var __do_actual_push_data = () => {
+let __do_actual_push_data = () => {
     let rows = __batched_rows;
     __batched_rows = [];
     let max_data = this.model.get('max_data');
@@ -81,7 +81,7 @@ var __do_actual_push_data = () => {
 
 this.__interval = null;
 
-var __push_data = (row,max_data) => {
+let __push_data = (row,max_data) => {
     if(!this.__interval) {
         this.__interval = setInterval(() => {
             if(__batched_rows.length > 0) {
@@ -167,14 +167,14 @@ __update_size = () => {
 
 // https://davidwalsh.name/javascript-debounce-function
 function __debounce(func, wait, immediate) {
-    var timeout;
+    let timeout;
     return function() {
-        var context = this, args = arguments;
-        var later = function() {
+        let context = this, args = arguments;
+        let later = function() {
             timeout = null;
             if (!immediate) func.apply(context, args);
         };
-        var callNow = immediate && !timeout;
+        let callNow = immediate && !timeout;
         clearTimeout(timeout);
         timeout = setTimeout(later, wait);
         if (callNow) func.apply(context, args);
