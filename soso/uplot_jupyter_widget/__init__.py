@@ -29,6 +29,7 @@ class uPlotWidget(jp_proxy_widget.JSProxyWidget):  # type: ignore
     opts = Dict({})
 
     in_selection_mode = Bool(False).tag(sync=True)
+    multiplier = Int(1).tag(sync=True)
 
     max_datapoints = Int(None, allow_none=True)
     auto_resize = Bool(False, allow_none=False).tag(sync=True)
@@ -47,7 +48,7 @@ class uPlotWidget(jp_proxy_widget.JSProxyWidget):  # type: ignore
         self.__make_plot()
 
         self.observe(lambda _: self.__make_plot(),
-                     names=["data", "opts", "css", "js", "max_datapoints"])
+                     names=["data", "opts", "css", "js", "max_datapoints", "multiplier"])
 
     def handle_custom_message_wrapper(self, widget: typing.Any, data: typing.Dict[str, typing.Any],
                                       *etcetera: typing.Any) -> None:
@@ -70,6 +71,9 @@ class uPlotWidget(jp_proxy_widget.JSProxyWidget):  # type: ignore
             self._clicked.clear()
 
             def callback(d: typing.Dict[str, float]) -> None:
+                for key in d.keys():
+                    if d[key]:
+                        d[key] = d[key] / float(self.multiplier)
                 out.append(d)
                 self._clicked.set()
 
@@ -82,11 +86,14 @@ class uPlotWidget(jp_proxy_widget.JSProxyWidget):  # type: ignore
 
     def __slice_data(self,
                      data: typing.List[typing.List[float]]) -> typing.List[typing.List[float]]:
-        if self.max_datapoints is None:
-            return data
         data = copy.deepcopy(self.data)
-        for idx in range(len(data)):
-            data[idx] = data[idx][-self.max_datapoints:]
+        if self.max_datapoints is not None:
+            for idx in range(len(data)):
+                data[idx] = data[idx][-self.max_datapoints:]
+        for d in data[1:]:
+            for i in range(len(d)):
+                if d[i]:
+                    d[i] = d[i] * self.multiplier
         return data
 
     def __make_plot(self) -> None:
@@ -95,6 +102,7 @@ class uPlotWidget(jp_proxy_widget.JSProxyWidget):  # type: ignore
         self.js_init(js, data=data, opts=self.opts)
 
     def push_data(self, row: typing.List[typing.Optional[float]]) -> None:
+        row = [row[0]] + [self.multiplier * r if r else r for r in row[1:]]
         msg: typing.Dict[str, typing.Any] = {
             'command': '__uplot_push_data',
             'payload': [row, self.max_datapoints]
