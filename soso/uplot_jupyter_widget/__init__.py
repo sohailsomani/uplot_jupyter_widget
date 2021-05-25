@@ -47,7 +47,14 @@ class uPlotWidget(jp_proxy_widget.JSProxyWidget):  # type: ignore
 
         self.__make_plot()
 
-        self.observe(lambda _: self.__make_plot(),
+        self.__make_plot_task: typing.Optional[asyncio.TimerHandle] = None
+
+        def schedule_make_plot(*a: typing.Any) -> None:
+            if self.__make_plot_task:
+                self.__make_plot_task.cancel()
+            self.__make_plot_task = asyncio.get_event_loop().call_later(0.25, self.__make_plot)
+
+        self.observe(schedule_make_plot,
                      names=["data", "opts", "css", "js", "max_datapoints", "multiplier"])
 
     def handle_custom_message_wrapper(self, widget: typing.Any, data: typing.Dict[str, typing.Any],
