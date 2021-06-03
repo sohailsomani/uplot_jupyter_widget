@@ -133,7 +133,7 @@ this.model.on('change:in_selection_mode',() => {
     this.el.classList.toggle('uplot-in-selection-mode',this.model.get('in_selection_mode'));
 });
 
-__update_size = () => {
+element.update_size = () => {
     const auto_resize = this.model.get('auto_resize');
     if(!auto_resize) return;
     const fullscreen = this.model.get('fullscreen');
@@ -181,10 +181,10 @@ function __debounce(func, wait, immediate) {
     };
 };
 
-const __debounced_resize = __debounce(__update_size,250);
+const __debounced_resize = __debounce(element.update_size,250);
 
 // Initial resize
-setTimeout(__update_size,1000);
+setTimeout(element.update_size,1000);
 
 this.el.addEventListener("resize",__debounced_resize);
 window.addEventListener("resize",__debounced_resize);
